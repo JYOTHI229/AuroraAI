@@ -37,6 +37,12 @@
     cursor: pointer;
 }
 
+.authButtons{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* chat input */
 .chatInput {
     width: 100%;
