@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import api from "../api.js";
 
 export const AuthContext = createContext();
 
@@ -8,11 +9,11 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (token) {
-            fetch("http://localhost:8080/api/me", {
+            api.get("/me", {
                 headers: { Authorization: `Bearer ${token}` }
             })
-            .then(res => res.json())
-            .then(data => {
+            .then(response => {
+                const data = response.data;
                 if (data.user) setUser(data.user);
                 else logout();
             })
@@ -22,13 +23,10 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await fetch("http://localhost:8080/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (res.ok) {
+            const res = await api.post("/login", { email, password });
+            const data = res.data;
+    
+            if (res.status === 200) {
                 setToken(data.token);
                 setUser(data.user);
                 localStorage.setItem("token", data.token);
@@ -42,25 +40,22 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (name, email, password) => {
-        try {
-            const res = await fetch("http://localhost:8080/api/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setToken(data.token);
-                setUser(data.user);
-                localStorage.setItem("token", data.token);
-                return { success: true };
-            } else {
-                return { success: false, error: data.error };
-            }
-        } catch (err) {
-            return { success: false, error: "Registration failed" };
+    try {
+        const res = await api.post("/register", { name, email, password });
+        const data = res.data;
+
+        if (res.status === 200) {
+            setToken(data.token);
+            setUser(data.user);
+            localStorage.setItem("token", data.token);
+            return { success: true };
+        } else {
+            return { success: false, error: data.error };
         }
-    };
+    } catch (err) {
+        return { success: false, error: "Registration failed" };
+    }
+   };
 
     const logout = () => {
         setToken("");

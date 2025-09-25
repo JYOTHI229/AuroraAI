@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/AuthContext.jsx";
 import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScaleLoader } from "react-spinners";
+import api from "../api.js";
 
 function ChatWindow() {
     const { prompt, setPrompt, reply, setReply, currThreadId, setPrevChats, setNewChat } = useContext(MyContext);
@@ -19,16 +20,12 @@ function ChatWindow() {
         setNewChat(false);
 
         try {
-            const response = await fetch("http://localhost:8080/api/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(user ? { Authorization: `Bearer ${token}` } : {})
-                },
-                body: JSON.stringify({ message: prompt, threadId: currThreadId })
+            const res = await api.post("/chat", { message: prompt, threadId: currThreadId }, {
+                headers: user ? { Authorization: `Bearer ${token}` } : {}
             });
-            const res = await response.json();
-            setReply(res.reply);
+    
+            // Axios puts the server response in res.data
+            setReply(res.data.reply);
         } catch(err) {
             console.log(err);
         }
