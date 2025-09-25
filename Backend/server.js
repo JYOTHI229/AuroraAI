@@ -9,11 +9,26 @@ const app = express();
 const PORT = 8080;
 
 app.use(express.json());
+
+const allowedOrigins = [
+    "http://localhost:5173", 
+    process.env.CLIENT_URL   
+];
+
+// CORS configuration
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173', 
-    credentials: true,               
-  }));
-  
+    origin: function(origin, callback){
+        // allow requests with no origin (like Postman)
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(origin) === -1){
+            const msg = `CORS policy does not allow access from this origin: ${origin}`;
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true // allow cookies/auth headers
+}));
+
 
 app.use("/api", authRoutes);
 app.use("/api", chatRoutes);
