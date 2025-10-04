@@ -77,8 +77,8 @@ It’s like a lightweight, privacy-friendly AI chat platform — focused purely 
 ## 👩‍💻 Developer
 
 **👤 Jyothi Kaku**  
-Full-Stack Developer 
-LinkedIn - https://www.linkedin.com/in/jyothi-kaku-a79448317/
+Full-Stack Developer | 
+LinkedIn - https://www.linkedin.com/in/jyothi-kaku-a79448317/  | 
 GitHub - https://github.com/JYOTHI229
 
 
